@@ -1,0 +1,10 @@
+.app {
+    padding: 40px 0;
+    margin: 0 auto;
+    width: 500px;
+    height: 500px;
+}
+
+#jurassicWorld {
+    border: 1px solid #484848;
+}
