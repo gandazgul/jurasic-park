@@ -19,6 +19,7 @@ class Animal extends Thing {
 
         if (this.gender === 'female') {
             this.egg = null;
+            this.color = 'yellow';
         }
     }
 
@@ -55,21 +56,29 @@ class Animal extends Thing {
 
         const mate = possibleMates[randInt(0, possibleMates.length - 1)];
 
-        if (this.gender === 'female') {
-            this.egg = new Egg(this);
-            this.color = 'red';
+        if (mate) {
+            if (this.gender === 'female') {
+                this.egg = new Egg(this);
+                this.color = 'red';
 
-            return true;
+                return true;
+            }
+            else {
+                return mate.mate({males: [this]}, {males: [this]})
+            }
         }
 
-        return mate.mate([]);
-
+        return false;
     }
 
     walkTowardsDestination(destination) {
-        const angle = Math.atan2(destination.y, destination.x);
-        this.x += Math.ceil(Math.cos(angle) * this.reach);
-        this.y += Math.ceil(Math.sin(angle) * this.reach);
+        const deltaX = this.x - destination.x;
+        const deltaY = this.y - destination.y;
+        const xSign = deltaX < 0 ? -1 : 1;
+        const ySign = deltaY < 0 ? -1 : 1;
+
+        this.x += this.reach * xSign;
+        this.y += this.reach * ySign;
     }
 
     walk(possibleDestinations = []) {
@@ -98,7 +107,8 @@ class Animal extends Thing {
         this.walked = true;
     }
 
-    eat() { /* what? */
+    eat() {
+        /* what? */
     }
 
     action(fieldOfView) {

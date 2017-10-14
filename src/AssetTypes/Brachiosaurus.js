@@ -12,8 +12,8 @@ class Brachiosaurus extends Animal {
         this.maxWeight = randInt(this.weight, this.weight + 50);
         this.weightLossPerCycle = 5;
 
-        this.color = '#4a5722';
-        this.sightDistance = 5;
+        // this.color = '#4a5722';
+        this.sightDistance = 15;
     }
 
     eat(trees) {

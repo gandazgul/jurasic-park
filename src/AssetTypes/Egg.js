@@ -6,7 +6,7 @@ class Egg extends Thing {
 
         this.mother = mother;
 
-        this.color = '#959595';
+        this.color = '#FFF5C3';
     }
 }
 

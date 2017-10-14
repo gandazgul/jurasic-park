@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {randInt} from './utils';
 import Tree from './AssetTypes/Tree';
 import './App.css';
-import config from './config.json';
+import config from './config';
 import Brachiosaurus from "./AssetTypes/Brachiosaurus";
 
 class App extends Component {
@@ -36,6 +36,7 @@ class App extends Component {
         this.state = {
             things,
             thingsLookup,
+            tick: 1,
         };
 
         this.draw = this.draw.bind(this);
@@ -46,8 +47,51 @@ class App extends Component {
         this.draw();
     }
 
+    static getFieldOfVision(x, y, sightDistance, thingsLookup, thing) {
+        const fieldOfVision = {
+            trees: [],
+            animalsOfOtherSpecies: [],
+            females: [],
+            males: [],
+        };
+
+        if (sightDistance) {
+
+
+            const startX = (x - sightDistance) < 0 ? 0 : x - sightDistance;
+            const startY = (y - sightDistance) < 0 ? 0 : y - sightDistance;
+
+            for (let x = startX; x <= startX + sightDistance * 2 + 1; x++) {
+                for (let y = startY; y <= startY + sightDistance * 2 + 1; y++) {
+                    const seenThing = thingsLookup[`${x},${y}`];
+                    if (seenThing && seenThing !== thing) {
+                        switch (seenThing.type) {
+                            case 'Tree':
+                                fieldOfVision.trees.push(seenThing);
+                                break;
+                            case 'Animal':
+                                if (seenThing.species !== thing.species) {
+                                    fieldOfVision.animalsOfOtherSpecies.push(seenThing);
+                                }
+                                else if (seenThing.gender === 'female') {
+                                    fieldOfVision.females.push(seenThing);
+                                }
+                                else {
+                                    fieldOfVision.males.push(seenThing);
+                                }
+                                break;
+                            default:
+                        }
+                    }
+                }
+            }
+        }
+
+        return fieldOfVision;
+    }
+
     draw() {
-        const {thingsLookup, things} = this.state;
+        const {thingsLookup, things, tick} = this.state;
 
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -56,48 +100,11 @@ class App extends Component {
             const x = thing.x;
             const y = thing.y;
             const sightDistance = thing.sightDistance;
-            const trees = [];
-            const animalsOfOtherSpecies = [];
-            const females = [];
-            const males = [];
 
             // get the field of view
-            if (sightDistance) {
-                const startX = (x - sightDistance) < 0 ? 0 : x - sightDistance;
-                const startY = (y - sightDistance) < 0 ? 0 : y - sightDistance;
+            const fieldOfVision = App.getFieldOfVision(x, y, sightDistance, thingsLookup, thing);
 
-                for (let x = startX; x <= startX + sightDistance * 2 + 1; x++) {
-                    for (let y = startY; y <= startY + 5; y++) {
-                        const seenThing = thingsLookup[`${x},${y}`];
-                        if (seenThing && seenThing !== thing) {
-                            switch (seenThing.type) {
-                                case 'Tree':
-                                    trees.push(seenThing);
-                                    break;
-                                case 'Animal':
-                                    if (seenThing.species !== thing.species) {
-                                        animalsOfOtherSpecies.push(seenThing);
-                                    }
-                                    else if (seenThing.gender === 'female') {
-                                        females.push(seenThing);
-                                    }
-                                    else {
-                                        males.push(seenThing);
-                                    }
-                                    break;
-                                default:
-                            }
-                        }
-                    }
-                }
-            }
-
-            thing.action({
-                trees,
-                animalsOfOtherSpecies,
-                males,
-                females,
-            });
+            thing.action(fieldOfVision);
 
             if (!thing.eaten) {
                 thing.weight -= thing.weightLossPerCycle + randInt(0, 5);
@@ -128,6 +135,8 @@ class App extends Component {
 
         this.setState({
             things: things.filter((val) => val),
+            thingsLookup,
+            tick: tick + 1,
         });
 
         setTimeout(this.draw, 1000);
@@ -144,6 +153,7 @@ class App extends Component {
                         }}>
                     Your browser doesn't support canvas.
                 </canvas>
+                <p className="park-cycle">Cycle: {this.state.tick}</p>
             </div>
         );
     }
