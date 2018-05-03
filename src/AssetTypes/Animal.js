@@ -1,3 +1,4 @@
+import config from '../config';
 import { distance, randInt } from '../utils';
 import Thing from './Thing';
 import Egg from './Egg';
@@ -9,7 +10,7 @@ class Animal extends Thing {
         this.weight = randInt(100, 200);
         this.minWeight = 20;
 
-        this.color = '#F21414';
+        this.color = '#f18a13';
         this.species = this.type = 'Animal';
         this.sightDistance = 3;
         this.reach = 2;
@@ -19,7 +20,7 @@ class Animal extends Thing {
 
         if (this.gender === 'female') {
             this.egg = null;
-            this.color = 'yellow';
+            this.color = 'bisque';
         }
     }
 
@@ -82,7 +83,7 @@ class Animal extends Thing {
     }
 
     walk(possibleDestinations = []) {
-        const maxParkSize = 50;
+        const maxParkSize = config.width / config.animalWidth;
 
         if (possibleDestinations.length) {
             const destination = possibleDestinations[randInt(0, possibleDestinations.length - 1)];

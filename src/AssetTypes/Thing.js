@@ -1,3 +1,4 @@
+import config from '../config';
 import { randInt, distance } from '../utils';
 
 class Thing {
@@ -63,7 +64,7 @@ class Thing {
         ctx.fillStyle = this.color;
         ctx.strokeStyle = '';
         ctx.beginPath();
-        ctx.arc(this.x * 10 + 5, this.y * 10 + 5, 5, 0, Math.PI * 2);
+        ctx.arc(this.x * config.animalWidth + 5, this.y * config.animalWidth + 5, 5, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.restore();

@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {randInt} from './utils';
+import React, { Component } from 'react';
+import { randInt } from './utils';
 import Tree from './AssetTypes/Tree';
 import './App.css';
 import config from './config';
@@ -91,7 +91,7 @@ class App extends Component {
     }
 
     draw() {
-        const {thingsLookup, things, tick} = this.state;
+        const { thingsLookup, things, tick } = this.state;
 
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -118,7 +118,7 @@ class App extends Component {
             else {
                 thing.draw(this.context);
 
-                if (thing.walked) {
+                if (thing.walked && (thing.x !== x || thing.y !== y)) {
                     thingsLookup[`${thing.x},${thing.y}`] = thingsLookup[`${x},${y}`];
                     delete thingsLookup[`${x},${y}`];
                 }
@@ -144,10 +144,15 @@ class App extends Component {
 
     render() {
         return (
-            <div className="app">
+            <div className="app"
+                 style={{
+                     width: config.width,
+                     height: config.height,
+                 }}
+            >
                 <canvas id="jurassicWorld"
-                        width={500}
-                        height={500}
+                        width={config.width}
+                        height={config.height}
                         ref={(canvas) => {
                             this.canvas = canvas;
                         }}>
